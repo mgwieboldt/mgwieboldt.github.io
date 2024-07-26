@@ -24,8 +24,8 @@
     <div class="header">
         <a href="index.html"><img src="img/stacks.png" alt="stacked lego icon" width="60" height="auto" class="center"
             style="margin-top:30px; cursor: pointer;"></a>
-        <h1>Brick Colors</h1>
-        <h2>From Least to Most Common</h2>
+        <h1>Average exam scores</h1>
+        
     </div>
 
     <p class="center">stuff </p>
@@ -44,12 +44,12 @@
                 width = 1200 - margin.left - margin.right,
                 height = 600 - margin.top - margin.bottom;
 
-            var xValue = function (d) { return d.name; },
+            var xValue = function (d) { return d['gender']; },
                 xScale = d3.scaleBand().range([0, width]).padding(0.1),
                 xMap = function (d) { return xScale(xValue(d)); },
                 xAxis = d3.axisBottom(xScale);
 
-            var yValue = function (d) { return d.quantity; },
+            var yValue = function (d) { return d['reading score']; },
                 yAxisScale = d3.scaleLinear().range([height, 0]),
                 yMap = function (d) { return yAxisScale(yValue(d)); },
                 yAxis = d3.axisLeft(yAxisScale).tickFormat(d3.format("~s"));
@@ -108,7 +108,7 @@
                 svg.append("text")
                     .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 90) + ")")
                     .style("text-anchor", "middle")
-                    .text("Color")
+                    .text("Variables")
                     .attr('class', 'bold');
 
                 //y label
@@ -118,7 +118,7 @@
                     .attr("x", 0 - (height / 2))
                     .attr("dy", "1em")
                     .style("text-anchor", "middle")
-                    .text("Quantity")
+                    .text("Average Score")
                     .attr('class', 'bold');
 
                 // bars
