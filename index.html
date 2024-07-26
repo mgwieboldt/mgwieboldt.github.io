@@ -1,7 +1,41 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CS416 Narrative Visualization</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Rubik:ital,wght@0,400;1,800&display=swap"
+        rel="stylesheet">
+</head>
+
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="vis.js"></script>
+    <div class="header">
+        <img src="img/blocks.png" alt="lego icon" width="60" height="auto" class="center"
+            style="margin-top:30px;"></img>
+        <h1>Lung Cancer Correlations</h1>
+        <h2>Exploring the variables correlated with lung canger</h2>
+    </div>
+
+    <p class="center">Cancer is one of the leading causes of death in America and Lung Cancer is the second most common type of cancer.
+        alike.</p>
+    <p class="center">Learning what behaviors correlate with lung cancer and what demographics are most effected could help save lives.</p>
+
+    <p class="center">Using this data set including both people with lung cancer and people without lung cancer I hope to inform you about this issue. 
+    </p>
+    <br><br>
+    <a href="scene1.html" style="text-decoration:none;"><button class="center">Next</button></a>
+
+    <div class="footer">
+        <h4>Maxwell Wieboldt (mgw10)</h4>
+        <h4>Dataset: https://www.kaggle.com/datasets/humairmunir/lung-cancer-risk-dataset/data</h4>
+    </div>
+
 </body>
+
 </html>
