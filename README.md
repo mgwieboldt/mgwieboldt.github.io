@@ -2,4 +2,4 @@
 Narrative Visualization for CS416 at UIUC
 
 Dataset:
-https://www.kaggle.com/datasets/humairmunir/lung-cancer-risk-dataset/data
+https://www.kaggle.com/datasets/spscientist/students-performance-in-exams/data
