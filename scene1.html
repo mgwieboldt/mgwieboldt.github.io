@@ -25,91 +25,66 @@
     <svg width="600" height="400"></svg>
 
     <script>
-        // Data processing
-        const data = [
-            {"gender": "female", "math_score": 72},
-            {"gender": "female", "math_score": 69},
-            {"gender": "female", "math_score": 90},
-            {"gender": "male", "math_score": 47},
-            {"gender": "male", "math_score": 76},
-            {"gender": "female", "math_score": 71},
-            {"gender": "female", "math_score": 88},
-            {"gender": "male", "math_score": 40},
-            {"gender": "male", "math_score": 64},
-            {"gender": "female", "math_score": 38},
-            {"gender": "male", "math_score": 58},
-            {"gender": "male", "math_score": 40},
-            {"gender": "female", "math_score": 65},
-            {"gender": "male", "math_score": 78},
-            {"gender": "female", "math_score": 50},
-            {"gender": "female", "math_score": 69},
-            {"gender": "male", "math_score": 88},
-            {"gender": "female", "math_score": 18},
-            {"gender": "male", "math_score": 46},
-            {"gender": "female", "math_score": 54},
-            {"gender": "male", "math_score": 66},
-            {"gender": "female", "math_score": 65},
-            {"gender": "male", "math_score": 44},
-            {"gender": "female", "math_score": 69},
-            {"gender": "male", "math_score": 74},
-            {"gender": "male", "math_score": 73},
-            {"gender": "male", "math_score": 69}
-        ];
+        // Load data from CSV file
+        d3.csv("StudentsPerformance.csv").then(function(data) {
+            data.forEach(d => {
+                d["math score"] = +d["math score"];
+            });
 
-        const groupedData = d3.group(data, d => d.gender);
-        const avgMathScoreByGender = Array.from(groupedData, ([key, values]) => ({
-            gender: key,
-            average: d3.mean(values, d => d.math_score)
-        }));
+            const groupedData = d3.group(data, d => d.gender);
+            const avgMathScoreByGender = Array.from(groupedData, ([key, values]) => ({
+                gender: key,
+                average: d3.mean(values, d => d["math score"])
+            }));
 
-        const svg = d3.select("svg");
-        const margin = {top: 20, right: 30, bottom: 40, left: 40};
-        const width = +svg.attr("width") - margin.left - margin.right;
-        const height = +svg.attr("height") - margin.top - margin.bottom;
-        const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            const svg = d3.select("svg");
+            const margin = {top: 20, right: 30, bottom: 40, left: 40};
+            const width = +svg.attr("width") - margin.left - margin.right;
+            const height = +svg.attr("height") - margin.top - margin.bottom;
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-        const x = d3.scaleBand()
-            .domain(avgMathScoreByGender.map(d => d.gender))
-            .rangeRound([0, width])
-            .padding(0.1);
+            const x = d3.scaleBand()
+                .domain(avgMathScoreByGender.map(d => d.gender))
+                .rangeRound([0, width])
+                .padding(0.1);
 
-        const y = d3.scaleLinear()
-            .domain([0, d3.max(avgMathScoreByGender, d => d.average)])
-            .nice()
-            .rangeRound([height, 0]);
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(avgMathScoreByGender, d => d.average)])
+                .nice()
+                .rangeRound([height, 0]);
 
-        g.append("g")
-            .selectAll(".bar")
-            .data(avgMathScoreByGender)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", d => x(d.gender))
-            .attr("y", d => y(d.average))
-            .attr("width", x.bandwidth())
-            .attr("height", d => height - y(d.average));
+            g.append("g")
+                .selectAll(".bar")
+                .data(avgMathScoreByGender)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", d => x(d.gender))
+                .attr("y", d => y(d.average))
+                .attr("width", x.bandwidth())
+                .attr("height", d => height - y(d.average));
 
-        g.append("g")
-            .attr("class", "axis axis--x")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x))
-            .append("text")
-            .attr("class", "axis-label")
-            .attr("x", width / 2)
-            .attr("y", margin.bottom - 10)
-            .attr("fill", "#000")
-            .text("Gender");
+            g.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x))
+                .append("text")
+                .attr("class", "axis-label")
+                .attr("x", width / 2)
+                .attr("y", margin.bottom - 10)
+                .attr("fill", "#000")
+                .text("Gender");
 
-        g.append("g")
-            .attr("class", "axis axis--y")
-            .call(d3.axisLeft(y))
-            .append("text")
-            .attr("class", "axis-label")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin.left + 10)
-            .attr("dy", "0.71em")
-            .attr("fill", "#000")
-            .text("Score");
-
+            g.append("g")
+                .attr("class", "axis axis--y")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 10)
+                .attr("dy", "0.71em")
+                .attr("fill", "#000")
+                .text("Score");
+        });
     </script>
 
     <p class="center">Stuff</p>
