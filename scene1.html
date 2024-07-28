@@ -22,9 +22,11 @@
 
 <body>
     <h2>Average Math Score grouped by Category</h2>
-    <div id="tooltip" class="tooltip">
-        <p><span id="value">Hover over a bar to see details</span></p>
+    
+    <div id="tooltip">
+        <p><span id="value"></span></p>
     </div>
+
     <svg width="1200" height="600"></svg>
 
     <script>
@@ -172,19 +174,16 @@
                     return height - y(d.value);
                 })
                 .on("mouseover", function (event, d) {
-
-                    d3.select("#tooltip")
-                        .select("#value")
-                        .style('top', y = d3.event.y)
-                        .style('left', d3.event.x)
-                        .html("<b>" + d.key + "</b><br/>" + d.value.toFixed(2));
-                    d3.select("#tooltip").transition().duration(200).style("opacity", .9);
-                    d3.select(this).style("stroke", "black").style("stroke-width", "2px");
-                })
+                        d3.select("#tooltip")
+                            .select("#value")
+                            .html("<b>" + d.key + "</b><br/>" + d.value.toFixed(2));
+                        d3.select("#tooltip").style("opacity", 1);
+                        d3.select(this).style("stroke", "black").style("stroke-width", "2px");
+                    })
                 .on("mouseout", function () {
-                    d3.select("#tooltip").transition().duration(500).style("opacity", 0);
+                    d3.select("#tooltip").style("opacity", 0);
                     d3.select(this).style("stroke", "none");
-                });
+                })
 
             // Add the y-axis
             g.append("g")
