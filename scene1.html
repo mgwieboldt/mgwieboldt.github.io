@@ -31,28 +31,16 @@
                 d["math score"] = +d["math score"];
             });
 
-            const groupedData = d3.rollup(data,
-                v => d3.mean(v, d => d["math score"]),
-                d => d.gender,
-                d => d["race/ethnicity"],
-                d => d["parental level of education"],
-                d => d.lunch,
-                d => d["test preparation course"]
-            );
+            // Calculate average scores for each group
+            const genderAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d.gender);
+            const lunchAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d.lunch);
+            const prepAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d["test preparation course"]);
 
-            const processedData = [];
-            groupedData.forEach((lunch, gender) => {
-                lunch.forEach((prep, lunchType) => {
-                    prep.forEach((score, prepType) => {
-                        processedData.push({
-                            gender: gender,
-                            lunch: lunchType,
-                            preparation: prepType,
-                            average: score
-                        });
-                    });
-                });
-            });
+            const processedData = [
+                ...Array.from(genderAvg, ([key, value]) => ({ group: key, average: value })),
+                ...Array.from(lunchAvg, ([key, value]) => ({ group: key, average: value })),
+                ...Array.from(prepAvg, ([key, value]) => ({ group: key, average: value }))
+            ];
 
             const svg = d3.select("svg");
             const margin = {top: 20, right: 30, bottom: 120, left: 40};
@@ -60,10 +48,10 @@
             const height = +svg.attr("height") - margin.top - margin.bottom;
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-            const x0 = d3.scaleBand()
-                .domain(processedData.map(d => `${d.gender}-${d.lunch}-${d.preparation}`))
+            const x = d3.scaleBand()
+                .domain(processedData.map(d => d.group))
                 .rangeRound([0, width])
-                .paddingInner(0.1);
+                .padding(0.1);
 
             const y = d3.scaleLinear()
                 .domain([0, d3.max(processedData, d => d.average)])
@@ -77,15 +65,15 @@
                 .data(processedData)
                 .enter().append("rect")
                 .attr("class", "bar")
-                .attr("x", d => x0(`${d.gender}-${d.lunch}-${d.preparation}`))
+                .attr("x", d => x(d.group))
                 .attr("y", d => y(d.average))
-                .attr("width", x0.bandwidth())
+                .attr("width", x.bandwidth())
                 .attr("height", d => height - y(d.average))
                 .on("mouseover", function(event, d) {
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    tooltip.html(`Gender: ${d.gender}<br>Lunch: ${d.lunch}<br>Preparation: ${d.preparation}<br>Average: ${d.average.toFixed(2)}`)
+                    tooltip.html(`Group: ${d.group}<br>Average Score: ${d.average.toFixed(2)}`)
                         .style("left", (event.pageX) + "px")
                         .style("top", (event.pageY - 28) + "px");
                 })
@@ -98,15 +86,10 @@
             g.append("g")
                 .attr("class", "axis axis--x")
                 .attr("transform", `translate(0,${height})`)
-                .call(d3.axisBottom(x0))
+                .call(d3.axisBottom(x))
                 .selectAll("text")
-                .attr("transform", "rotate(-65)")
-                .attr("text-anchor", "end")
-                .append("text")
-                .attr("class", "axis-label")
-                .attr("x", width / 2)
-                .attr("y", margin.bottom - 10)
-                .attr("fill", "#000");
+                .attr("transform", "rotate(-45)")
+                .attr("text-anchor", "end");
 
             g.append("g")
                 .attr("class", "axis axis--y")
@@ -120,7 +103,6 @@
                 .text("Average Score");
         });
     </script>
-
     <p class="center">Stuff</p>
 
     <br><br>
