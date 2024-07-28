@@ -40,10 +40,10 @@
 
             const processedData = [
                 ...Array.from(genderAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
-                ...Array.from(raceAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
-                ...Array.from(educationAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
-                ...Array.from(lunchAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
-                ...Array.from(prepAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
+                ...Array.from(raceAvg, ([key, value]) => ({ group: "Ethnicity", category: key, average: value })),
+                ...Array.from(educationAvg, ([key, value]) => ({ group: "Parental Education Level", category: key, average: value })),
+                ...Array.from(lunchAvg, ([key, value]) => ({ group: "Lunch Type", category: key, average: value })),
+                ...Array.from(prepAvg, ([key, value]) => ({ group: "Test Preparation", category: key, average: value })),
             ];
 
             const svg = d3.select("svg");
@@ -103,7 +103,7 @@
                 .attr("transform", "rotate(-90)")
                 .attr("y", -margin.left + 10)
                 .attr("dy", "0.71em")
-                .attr("fill", "#111")
+                .attr("fill", "#000")
                 .text("Average Score");
         });
     </script>
