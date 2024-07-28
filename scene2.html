@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>CS416 Narrative Visualization</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Rubik:ital,wght@0,400;1,800&display=swap"
+        rel="stylesheet">
+    <style>
+        .bold {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-weight: bold;
+        }
+
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Average Score grouped by Category</h2>
+
+    <div>
+        <label for="scoreType">Select Test Preparation: </label>
+        <select id="scoreType">
+            <option value="completed">Completed Test Preparation</option>
+            <option value="none">None Test Preparation</option>
+        </select>
+    </div>
+
+    <div id="tooltip">
+        <p><span id="value"></span></p>
+    </div>
+
+    <svg width="1400" height="600"></svg>
+
+    <script>
+        // Define color mapping for categories
+        var color = {
+            "Gender": '#4A7B9D',
+            "Ethnicity": '#54577C',
+            "Parental Education Level": '#ED6A5A',
+            "Lunch Type": '#C21FEF'
+        };
+
+        // Load data from CSV file
+        d3.csv("StudentsPerformance.csv").then(function (data) {
+            data.forEach(d => {
+                d["math score"] = +d["math score"];
+                d["reading score"] = +d["reading score"];
+                d["writing score"] = +d["writing score"];
+                d["average"] = (d["math score"] + d["reading score"] + d["writing score"]) / 3;
+            });
+
+            // Initial test preparation status
+            let prepStatus = "completed";
+
+            const svg = d3.select("svg");
+            const margin = { top: 50, right: 30, bottom: 150, left: 40 }; // Adjust top margin to accommodate tooltip
+            const width = +svg.attr("width") - margin.left - margin.right;
+            const height = +svg.attr("height") - margin.top - margin.bottom;
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+            var barPadding = 10;
+
+            function updateChart(prepStatus) {
+                const filteredData = data.filter(d => d["test preparation course"] === prepStatus);
+
+                // Calculate average scores for each group
+                const genderAvg = d3.rollup(filteredData, v => d3.mean(v, d => d["average"]), d => d.gender);
+                const raceAvg = d3.rollup(filteredData, v => d3.mean(v, d => d["average"]), d => d["race/ethnicity"]);
+                const educationAvg = d3.rollup(filteredData, v => d3.mean(v, d => d["average"]), d => d["parental level of education"]);
+                const lunchAvg = d3.rollup(filteredData, v => d3.mean(v, d => d["average"]), d => d.lunch);
+
+                const processedData = [
+                    { key: "Gender", values: Array.from(genderAvg, ([key, value]) => ({ key: key, value: value })) },
+                    { key: "Ethnicity", values: Array.from(raceAvg, ([key, value]) => ({ key: key, value: value })) },
+                    { key: "Parental Education Level", values: Array.from(educationAvg, ([key, value]) => ({ key: key, value: value })) },
+                    { key: "Lunch Type", values: Array.from(lunchAvg, ([key, value]) => ({ key: key, value: value })) },
+                ];
+
+                const overallAvg = d3.mean(filteredData, d => d["average"]);
+
+                // dummy array
+                var rangeBands = [];
+                // cummulative value to position our bars
+                var cummulative = 0;
+                processedData.forEach(function (val, i) {
+                    val.cummulative = cummulative;
+                    cummulative += val.values.length;
+                    val.values.forEach(function (values) {
+                        rangeBands.push(i);
+                    })
+                });
+
+                // set scale to cover whole svg 
+                var x_category = d3.scaleLinear()
+                    .range([0, width]);
+
+                // create dummy scale to get rangeBands (width/childrenValues)
+                var x_defect = d3.scaleBand().domain(rangeBands)
+                    .range([0, width]).padding(0.1);
+                var x_category_domain = x_defect.bandwidth() * rangeBands.length;
+                x_category.domain([0, x_category_domain]);
+
+                var y = d3.scaleLinear()
+                    .domain([0, 100])
+                    .nice()
+                    .rangeRound([height, 0]);
+
+                g.selectAll("*").remove();
+
+                var category_g = g.selectAll(".category")
+                    .data(processedData)
+                    .enter().append("g")
+                    .attr("class", function (d) {
+                        return 'category category-' + d.key;
+                    })
+                    .attr("transform", function (d) { // offset by inner group size
+                        var x_group = x_category((d.cummulative * x_defect.bandwidth()));
+                        return "translate(" + x_group + ",0)";
+                    })
+                    .attr("fill", function (d) { // make child elements of group "inherit" this fill
+                        return color[d.key];
+                    });
+
+                var defect_g = category_g.selectAll(".defect")
+                    .data(function (d) {
+                        return d.values;
+                    })
+                    .enter().append("g")
+                    .attr("class", function (d) {
+                        return 'defect defect-' + d.key;
+                    })
+                    .attr("transform", function (d, i) { // offset by index
+                        return "translate(" + x_category((i * x_defect.bandwidth())) + ",0)";
+                    });
+
+                var category_label = category_g.selectAll(".category-label")
+                    .data(function (d) {
+                        return [d];
+                    })
+                    .enter().append("text")
+                    .attr("class", function (d) {
+                        return 'category-label category-label-' + d.key;
+                    })
+                    .attr("transform", function (d) {
+                        var x_label = x_category((d.values.length * x_defect.bandwidth() + barPadding) / 2);
+                        var y_label = height + 80;
+                        return "translate(" + x_label + "," + y_label + ")";
+                    })
+                    .attr('text-anchor', 'middle')
+                    .selectAll("tspan")
+                    .data(function (d) {
+                        return d.key.split(" ");
+                    })
+                    .enter().append("tspan")
+                    .attr("x", 0)
+                    .attr("dy", "1em")
+                    .text(function (d) {
+                        return d;
+                    });
+
+                var defect_label = defect_g.selectAll(".defect-label")
+                    .data(function (d) {
+                        return [d];
+                    })
+                    .enter().append("text")
+                    .attr("class", function (d) {
+                        return 'defect-label defect-label-' + d.key;
+                    })
+                    .attr("transform", function (d) {
+                        var x_label = x_category((x_defect.bandwidth() + barPadding) / 2);
+                        var y_label = height + 10;
+                        return "translate(" + x_label + "," + y_label + ")";
+                    })
+                    .attr('text-anchor', 'middle')
+                    .selectAll("tspan")
+                    .data(function (d) {
+                        return d.key.split(" ");
+                    })
+                    .enter().append("tspan")
+                    .attr("x", 0)
+                    .attr("dy", "1em")
+                    .text(function (d) {
+                        return d;
+                    });
+
+                var rects = defect_g.selectAll('.rect')
+                    .data(function (d) {
+                        return [d];
+                    })
+                    .enter().append("rect")
+                    .attr("class", "rect")
+                    .attr("width", x_category(x_defect.bandwidth() - barPadding))
+                    .attr("x", function (d) {
+                        return x_category(barPadding);
+                    })
+                    .attr("y", function (d) {
+                        return y(d.value);
+                    })
+                    .attr("height", function (d) {
+                        return height - y(d.value);
+                    })
+                    .on("mouseover", function (event, d) {
+                        d3.select("#tooltip")
+                            .select("#value")
+                            .html("<b>" + d.key + "</b> " + "<br/>" + "<b>Average Score: </b>" + d.value.toFixed(2));
+                        d3.select("#tooltip").style("opacity", 1);
+                        d3.select(this).style("stroke", "black").style("stroke-width", "2px");
+                    })
+                    .on("mouseout", function () {
+                        d3.select("#tooltip").style("opacity", 0);
+                        d3.select(this).style("stroke", "none");
+                    });
+
+                // Add the y-axis
+                g.append("g")
+                    .attr("class", "axis axis--y")
+                    .call(d3.axisLeft(y))
+                    .append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", -margin.left + 10)
+                    .attr("dy", "0.71em")
+                    .attr("fill", "#000");
+
+                // Add the x-axis
+                g.append("g")
+                    .attr("class", "axis axis--x")
+                    .attr("transform", `translate(0,${height})`)
+                    .call(d3.axisBottom(x_category).tickFormat(function (d, i) { return ''; }))
+                    .selectAll("text")
+                    .attr("transform", "rotate(-45)")
+                    .attr("text-anchor", "end");
+
+                // Add the overall average line
+                g.append("line")
+                    .attr("x1", 0)
+                    .attr("x2", width)
+                    .attr("y1", y(overallAvg))
+                    .attr("y2", y(overallAvg))
+                    .attr("stroke", "red")
+                    .attr("stroke-width", 2)
+                    .attr("stroke-dasharray", "4,4");
+
+                g.append("text")
+                    .attr("x", width - 80)
+                    .attr("y", y(overallAvg) - 10)
+                    .attr("text-anchor", "end")
+                    .attr("fill", "red")
+                    .text(`Overall Average: ${overallAvg.toFixed(2)}`);
+            }
+
+            // Initial chart rendering
+            updateChart(prepStatus);
+
+            // Handle dropdown change
+            d3.select("#scoreType").on("change", function () {
+                prepStatus = d3.select(this).property("value");
+                updateChart(prepStatus);
+            });
+        });
+    </script>
+    <p class="center">Stuff</p>
+
+    <br><br>
+
+    <a href="scene2.html" style="text-decoration:none;"><button class="center">Next</button></a>
+    <a href="index.html" style="text-decoration:none;"><button class="center"
+        style="outline: 2px; outline-color: black; background-color: #0055BF; margin-bottom: 50px;">Back</button></a>
+
+    <br><br><br>
+    <div class="footer">
+        <h4>Maxwell Wieboldt (mgw10)</h4>
+        <h4>Dataset: https://www.kaggle.com/datasets/spscientist/students-performance-in-exams/data</h4>
+    </div>
+
+</body>
+
+</html>
