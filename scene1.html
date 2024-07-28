@@ -34,6 +34,8 @@
             const groupedData = d3.rollup(data,
                 v => d3.mean(v, d => d["math score"]),
                 d => d.gender,
+                d => d["race/ethnicity"],
+                d => d["parental level of education"],
                 d => d.lunch,
                 d => d["test preparation course"]
             );
