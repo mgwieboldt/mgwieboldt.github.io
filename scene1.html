@@ -207,19 +207,6 @@
                 .attr("transform", "rotate(-45)")
                 .attr("text-anchor", "end");
 
-            // Add group labels
-            g.selectAll(".group-label")
-                .data(processedData)
-                .enter().append("text")
-                .attr("class", "group-label")
-                .attr("transform", function (d) {
-                    var x_label = x_category((d.cummulative * x_defect.bandwidth()) + (d.values.length * x_defect.bandwidth() / 2));
-                    return "translate(" + x_label + "," + (height + 50) + ")";
-                })
-                .text(function (d) {
-                    return d.key;
-                })
-                .attr('text-anchor', 'middle');
         });
     </script>
     <p class="center">Stuff</p>
