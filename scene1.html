@@ -22,6 +22,7 @@
 </head>
 
 <body>
+    <svg width="1200" height="600"></svg>
     <div class="header">
         <a href="index.html"><img src="img/stacks.png" alt="stacked lego icon" width="60" height="auto" class="center"
             style="margin-top:30px; cursor: pointer;"></a>
@@ -149,7 +150,7 @@
                 .text(function (d) {
                     return d.key;
                 })
-                .attr('text-anchor', 'middle');
+                .attr('text-anchor', 'middle', 'word-wrap: break-word');
 
             var defect_label = defect_g.selectAll(".defect-label")
                 .data(function (d) {
