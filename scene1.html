@@ -68,7 +68,7 @@
                 .padding(0);
 
             var xValue = function (d) { return d.category; },
-                xScale = d3.scaleBand().range([0, x0.bandwidth()]).padding(0.1),
+                xScale = d3.scaleBand().range([0, 4]).padding(0.1),
                 xMap = function (d) { return xScale(xValue(d)); },
                 xAxis = d3.axisBottom(xScale);
 
