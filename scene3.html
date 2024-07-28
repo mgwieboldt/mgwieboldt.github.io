@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>CS416 Narrative Visualization</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Rubik:ital,wght@0,400;1,800&display=swap"
+        rel="stylesheet">
+    <style>
+        .bold {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-weight: bold;
+        }
+
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .pie-chart {
+            display: inline-block;
+            margin: 20px;
+        }
+
+        .chart-title {
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Percentage of Students Completing Test Preparation by Category</h2>
+
+    <div id="charts"></div>
+
+    <div id="tooltip">
+        <p><span id="value"></span></p>
+    </div>
+
+    <script>
+        // Define color mapping for test preparation status
+        var color = {
+            "completed": '#4A7B9D',
+            "none": '#ED6A5A'
+        };
+
+        // Load data from CSV file
+        d3.csv("StudentsPerformance.csv").then(function (data) {
+            const categories = ["gender", "race/ethnicity", "parental level of education", "lunch"];
+
+            // Create pie chart for each category
+            categories.forEach(category => {
+                createPieChart(category);
+            });
+
+            function createPieChart(category) {
+                const width = 300;
+                const height = 300;
+                const radius = Math.min(width, height) / 2;
+
+                const svg = d3.select("#charts")
+                    .append("div")
+                    .attr("class", "pie-chart")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .append("g")
+                    .attr("transform", `translate(${width / 2},${height / 2})`);
+
+                const pie = d3.pie()
+                    .value(d => d.value)
+                    .sort(null);
+
+                const arc = d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius);
+
+                const dataByCategory = d3.nest()
+                    .key(d => d[category])
+                    .rollup(v => {
+                        return {
+                            completed: v.filter(d => d["test preparation course"] === "completed").length,
+                            none: v.filter(d => d["test preparation course"] === "none").length
+                        };
+                    })
+                    .entries(data);
+
+                const pieData = dataByCategory.map(d => {
+                    return {
+                        category: d.key,
+                        values: [
+                            { key: "completed", value: d.value.completed },
+                            { key: "none", value: d.value.none }
+                        ]
+                    };
+                });
+
+                pieData.forEach(d => {
+                    const pieGroup = svg.append("g")
+                        .attr("class", "pie-group");
+
+                    const arcs = pieGroup.selectAll(".arc")
+                        .data(pie(d.values))
+                        .enter().append("g")
+                        .attr("class", "arc");
+
+                    arcs.append("path")
+                        .attr("d", arc)
+                        .attr("fill", d => color[d.data.key])
+                        .on("mouseover", function (event, d) {
+                            d3.select("#tooltip")
+                                .select("#value")
+                                .html(`<b>${d.data.key}</b>: ${d.data.value}`);
+                            d3.select("#tooltip").style("opacity", 1);
+                        })
+                        .on("mouseout", function () {
+                            d3.select("#tooltip").style("opacity", 0);
+                        });
+
+                    arcs.append("text")
+                        .attr("transform", d => `translate(${arc.centroid(d)})`)
+                        .attr("dy", "0.35em")
+                        .attr("text-anchor", "middle")
+                        .text(d => `${Math.round((d.data.value / d3.sum(pie(d.values).map(d => d.data.value))) * 100)}%`);
+                });
+
+                d3.select("#charts")
+                    .append("div")
+                    .attr("class", "chart-title")
+                    .text(category.charAt(0).toUpperCase() + category.slice(1));
+            }
+        });
+    </script>
+
+    <div class="footer">
+        <h4>Maxwell Wieboldt (mgw10)</h4>
+        <h4>Dataset: https://www.kaggle.com/datasets/spscientist/students-performance-in-exams/data</h4>
+    </div>
+</body>
+
+</html>
