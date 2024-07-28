@@ -42,7 +42,7 @@
 </head>
 
 <body>
-    <h2>Percentage of Students Completing Test Preparation by Category</h2>
+    <h2>Percentage of Students Completing Test Preparation by Subcategory</h2>
 
     <div id="charts"></div>
 
@@ -60,62 +60,59 @@
         d3.csv("StudentsPerformance.csv").then(function (data) {
             const categories = ["gender", "race/ethnicity", "parental level of education", "lunch"];
 
-            // Create pie chart for each category
+            // Create pie chart for each subcategory
             categories.forEach(category => {
-                createPieChart(category);
+                createPieChartsForSubcategory(category);
             });
 
-            function createPieChart(category) {
+            function createPieChartsForSubcategory(category) {
                 var margin = 20,
                     width = 250,
                     height = 250,
                     radius = Math.min(width, height) / 2 - margin;
 
-                const svg = d3.select("#charts")
-                    .append("div")
-                    .attr("class", "pie-chart")
-                    .append("svg")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .append("g")
-                    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
                 const dataByCategory = d3.group(data, d => d[category]);
 
-                const pieData = Array.from(dataByCategory, ([key, values]) => {
+                const pie = d3.pie()
+                    .value(d => d.value);
+
+                const arc = d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius);
+
+                dataByCategory.forEach((values, key) => {
                     const completed = values.filter(d => d["test preparation course"] === "completed").length;
                     const none = values.filter(d => d["test preparation course"] === "none").length;
-                    return {
-                        category: key,
-                        values: [
-                            { key: "completed", value: (completed / values.length) * 100, subcategory: key },
-                            { key: "none", value: (none / values.length) * 100, subcategory: key }
-                        ]
-                    };
-                });
+                    const total = completed + none;
+                    const pieData = [
+                        { key: "completed", value: (completed / total) * 100 },
+                        { key: "none", value: (none / total) * 100 }
+                    ];
 
-                var pie = d3.pie()
-                    .value(function (d) { return d.value; });
+                    const svg = d3.select("#charts")
+                        .append("div")
+                        .attr("class", "pie-chart")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .append("g")
+                        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-                pieData.forEach(d => {
-                    var data_ready = pie(d.values);
+                    const data_ready = pie(pieData);
 
-                    var arcs = svg.selectAll('g')
+                    const arcs = svg.selectAll('g')
                         .data(data_ready)
                         .enter()
                         .append('path')
-                        .attr('d', d3.arc()
-                            .innerRadius(0)
-                            .outerRadius(radius)
-                        )
-                        .attr('fill', function (d) { return color(d.data.key); })
+                        .attr('d', arc)
+                        .attr('fill', d => color(d.data.key))
                         .attr("stroke", "black")
                         .style("stroke-width", "2px")
                         .style("opacity", 0.7)
                         .on("mouseover", function (event, d) {
                             d3.select("#tooltip")
                                 .select("#value")
-                                .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%`);
+                                .html(`<b>${key}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%`);
                             d3.select("#tooltip").style("opacity", 1);
                             d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                         })
@@ -127,7 +124,7 @@
                     svg.append("text")
                         .attr("transform", `translate(0, ${height / 2 + margin})`)
                         .attr("text-anchor", "middle")
-                        .text(d.category)
+                        .text(`${category}: ${key}`)
                         .attr("class", "chart-title");
                 });
             }
