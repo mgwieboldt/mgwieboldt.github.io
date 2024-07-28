@@ -133,7 +133,7 @@
                 })
                 .attr("transform", function (d) {
                     var x_label = x_category((d.values.length * x_defect.bandwidth() + barPadding) / 2);
-                    var y_label = height + 30;
+                    var y_label = height + 50;
                     return "translate(" + x_label + "," + y_label + ")";
                 })
                 .text(function (d) {
