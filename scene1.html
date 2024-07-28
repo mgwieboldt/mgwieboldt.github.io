@@ -24,6 +24,10 @@
     <h2>Average Math Score grouped by Gender</h2>
     <svg width="600" height="400"></svg>
 
+    <div id="tooltip">
+        <p><span id="value"></span></p>
+    </div>
+
     <script>
         // Load data from CSV file
         d3.csv("StudentsPerformance.csv").then(function(data) {
@@ -46,16 +50,11 @@
                 ...Array.from(prepAvg, ([key, value]) => ({ group: "Test Preparation", category: key, average: value })),
             ];
 
-            
+            const svg = d3.select("svg");
             const margin = {top: 20, right: 30, bottom: 150, left: 40};
             const width = +svg.attr("width") - margin.left - margin.right;
             const height = +svg.attr("height") - margin.top - margin.bottom;
-            var svg = d3.select("#bar-chart").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
             const x0 = d3.scaleBand()
                 .domain(processedData.map(d => d.group))
@@ -78,70 +77,51 @@
 
             const tooltip = d3.select(".tooltip");
 
-            xScale.domain(data.map(xValue));
-                svg.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis)
-                    .selectAll("text")
-                    .style("text-anchor", "end")
-                    .attr("dx", "-.8em")
-                    .attr("dy", ".15em")
-                    .attr("transform", "rotate(-45)");
-
-                //y
-                console.log(d3.max(data, yValue));
-                yAxisScale.domain([0, d3.max(data, yValue)]);
-                svg.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis);
-
-                //x label
-                svg.append("text")
-                    .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 90) + ")")
-                    .style("text-anchor", "middle")
-                    .text("Color")
-                    .attr('class', 'bold');
-
-                //y label
-                svg.append("text")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", 0 - margin.left + 10)
-                    .attr("x", 0 - (height / 2))
-                    .attr("dy", "1em")
-                    .style("text-anchor", "middle")
-                    .text("Quantity")
-                    .attr('class', 'bold');
-
-                // bars
-                svg.selectAll(".bar")
-                    .data(data)
-                    .enter().append("rect")
-                    .attr("class", "bar")
-                    .attr("x", xMap)
-                    .attr("width", xScale.bandwidth())
-                    .attr("y", height) 
-                    .attr("height", 0)
-                    .style("fill", cValue)
-                    .on("mouseover", function (event, d) {
-                        d3.select("#tooltip")
+            g.append("g")
+                .selectAll("g")
+                .data(d3.group(processedData, d => d.group))
+                .enter().append("g")
+                .attr("transform", d => `translate(${x0(d[0])},0)`)
+                .selectAll("rect")
+                .data(d => d[1])
+                .enter().append("rect")
+                .attr("x", d => x1(d.category))
+                .attr("y", d => y(d.average))
+                .attr("width", x1.bandwidth())
+                .attr("height", d => height - y(d.average))
+                .attr("fill", d => color(d.category))
+                .on("mouseover", function(event, d) {
+                    d3.select("#tooltip")
                             .select("#value")
                             .html("<b>Color: </b>" + d.name + "<br/>" + "<b>Quantity: </b>" + d.quantity);
                         d3.select("#tooltip").style("opacity", 1);
                         d3.select(this).style("stroke", "black").style("stroke-width", "2px");
-                    })
-                    .on("mouseout", function () {
+                })
+                .on("mouseout", function () {
                         d3.select("#tooltip").style("opacity", 0);
                         d3.select(this).style("stroke", "none");
-                    })
-                    .transition() 
-                    .delay(500)
-                    .duration(3000)
-                    .attr("y", yMap) 
-                    .attr("height", function (d) { return height - yMap(d); }); 
+                    });
 
-            });
-        </script>
+            g.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x0))
+                .selectAll("text")
+                .attr("transform", "rotate(-45)")
+                .attr("text-anchor", "end");
+
+            g.append("g")
+                .attr("class", "axis axis--y")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 10)
+                .attr("dy", "0.71em")
+                .attr("fill", "#000")
+                .text("Average Score");
+        });
+    </script>
     <p class="center">Stuff</p>
 
     <br><br>
