@@ -56,6 +56,9 @@
             "Lunch Type": '#C21FEF'
         };
 
+        // Define the order of the categories
+        const categoryOrder = ["Gender", "Ethnicity", "Parental Education Level", "Lunch Type"];
+
         // Load data from CSV file
         d3.csv("StudentsPerformance.csv").then(function (data) {
             data.forEach(d => {
@@ -124,7 +127,7 @@
                 g.selectAll("*").remove();
 
                 var category_g = g.selectAll(".category")
-                    .data(processedData)
+                    .data(processedData.sort((a, b) => categoryOrder.indexOf(a.key) - categoryOrder.indexOf(b.key)))
                     .enter().append("g")
                     .attr("class", function (d) {
                         return 'category category-' + d.key;
