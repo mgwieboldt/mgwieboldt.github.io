@@ -17,19 +17,28 @@
             font-weight: bold;
         }
 
-
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
     </style>
 </head>
 
 <body>
-   
+    <h2>Average Math Score grouped by Category</h2>
+    <svg width="1200" height="600"></svg>
 
     <div id="tooltip" class="tooltip">
         <p><span id="value"></span></p>
     </div>
 
-    
-        <script>
+    <script>
         // Define color mapping for categories
         var color = {
             "Gender": '#4A7B9D',
@@ -62,8 +71,8 @@
 
             const svg = d3.select("svg");
             const margin = { top: 20, right: 30, bottom: 150, left: 40 };
-            const width = 1200 - margin.left - margin.right;
-            const height = 600 - margin.top - margin.bottom;
+            const width = +svg.attr("width") - margin.left - margin.right;
+            const height = +svg.attr("height") - margin.top - margin.bottom;
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
             var barPadding = 10;
@@ -137,7 +146,7 @@
                 .text(function (d) {
                     return d.key;
                 })
-                .attr('text-anchor', 'middle', 'word-wrap: break-word');
+                .attr('text-anchor', 'middle');
 
             var defect_label = defect_g.selectAll(".defect-label")
                 .data(function (d) {
@@ -175,13 +184,15 @@
                 })
                 .on("mouseover", function (event, d) {
                     d3.select("#tooltip")
+                        .style("left", (event.pageX + 10) + "px") // Adjust horizontal position
+                        .style("top", (event.pageY - 40) + "px")  // Adjust vertical position
                         .select("#value")
-                        .html("<b>" + d.key + "<br/>" + "<b>Average Score: </b>" + d.value.toFixed(2));
-                    d3.select("#tooltip").style("opacity", 1);
+                        .html("<b>" + d.key + "</b><br/>" + d.value.toFixed(2));
+                    d3.select("#tooltip").transition().duration(200).style("opacity", .9);
                     d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                 })
                 .on("mouseout", function () {
-                    d3.select("#tooltip").style("opacity", 0);
+                    d3.select("#tooltip").transition().duration(500).style("opacity", 0);
                     d3.select(this).style("stroke", "none");
                 });
 
@@ -206,10 +217,21 @@
                 .attr("transform", "rotate(-45)")
                 .attr("text-anchor", "end");
 
-            
+            // Add group labels
+            g.selectAll(".group-label")
+                .data(processedData)
+                .enter().append("text")
+                .attr("class", "group-label")
+                .attr("transform", function (d) {
+                    var x_label = x_category((d.cummulative * x_defect.bandwidth()) + (d.values.length * x_defect.bandwidth() / 2));
+                    return "translate(" + x_label + "," + (height + 50) + ")";
+                })
+                .text(function (d) {
+                    return d.key;
+                })
+                .attr('text-anchor', 'middle');
         });
     </script>
-    
     <p class="center">Stuff</p>
 
     <br><br>
@@ -227,4 +249,3 @@
 </body>
 
 </html>
-
