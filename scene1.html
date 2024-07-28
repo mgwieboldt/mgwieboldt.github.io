@@ -56,15 +56,16 @@
             const height = +svg.attr("height") - margin.top - margin.bottom;
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
+
             const x0 = d3.scaleBand()
                 .domain(processedData.map(d => d.group))
-                //.rangeRound([0, width])
-                //.paddingInner(0.01);
+                .rangeRound([0, width])
+                .paddingInner(0);
 
             const x1 = d3.scaleBand()
                 .domain(processedData.map(d => d.category))
-                //.rangeRound([0, x0.bandwidth()])
-                //.padding(0);
+                .rangeRound([0, x0.bandwidth()])
+                .padding(0);
 
             const y = d3.scaleLinear()
                 .domain([0, d3.max(processedData, d => d.average)])
