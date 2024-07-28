@@ -39,11 +39,11 @@
             const prepAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d["test preparation course"]);
 
             const processedData = [
-                ...Array.from(genderAvg, ([key, value]) => ({ group: key, average: value })),
-                ...Array.from(raceAvg, ([key, value]) => ({ group: key, average: value })),
-                ...Array.from(educationAvg, ([key, value]) => ({ group: key, average: value })),
-                ...Array.from(lunchAvg, ([key, value]) => ({ group: key, average: value })),
-                ...Array.from(prepAvg, ([key, value]) => ({ group: key, average: value }))
+                ...Array.from(genderAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
+                ...Array.from(raceAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
+                ...Array.from(educationAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
+                ...Array.from(lunchAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
+                ...Array.from(prepAvg, ([key, value]) => ({ group: "Gender", category: key, average: value })),
             ];
 
             const svg = d3.select("svg");
