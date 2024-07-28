@@ -35,7 +35,7 @@
             "Gender": '#4A7B9D',
             "Ethnicity": '#54577C',
             "Parental Education Level": '#ED6A5A',
-            "Lunch Type": '#FBCE67',
+            "Lunch Type": '#C21FEF',
             "Test Preparation": '#8ECAE6'
         };
 
@@ -123,7 +123,7 @@
                     return "translate(" + x_category((i * x_defect.bandwidth())) + ",0)";
                 });
 
-                var category_label = category_g.selectAll(".category-label")
+            var category_label = category_g.selectAll(".category-label")
                 .data(function (d) {
                     return [d];
                 })
@@ -136,17 +136,10 @@
                     var y_label = height + 30;
                     return "translate(" + x_label + "," + y_label + ")";
                 })
-                .attr('text-anchor', 'middle')
-                .selectAll("tspan")
-                .data(function (d) {
-                    return d.key.split(" ");
-                })
-                .enter().append("tspan")
-                .attr("x", 0)
-                .attr("dy", "1em")
                 .text(function (d) {
-                    return d;
-                });
+                    return d.key;
+                })
+                .attr('text-anchor', 'middle');
 
             var defect_label = defect_g.selectAll(".defect-label")
                 .data(function (d) {
