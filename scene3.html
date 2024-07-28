@@ -88,8 +88,8 @@
                     return {
                         category: key,
                         values: [
-                            { key: "completed", value: (completed / values.length) * 100 },
-                            { key: "none", value: (none / values.length) * 100 }
+                            { key: "completed", value: (completed / values.length) * 100, subcategory: key },
+                            { key: "none", value: (none / values.length) * 100, subcategory: key }
                         ]
                     };
                 });
@@ -115,7 +115,7 @@
                         .on("mouseover", function (event, d) {
                             d3.select("#tooltip")
                                 .select("#value")
-                                .html(`<b>${d.data.key}</b>: ${d.data.value.toFixed(2)}%`);
+                                .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%`);
                             d3.select("#tooltip").style("opacity", 1);
                             d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                         })
