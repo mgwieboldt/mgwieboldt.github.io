@@ -105,7 +105,7 @@
                     { key: "Ethnicity", values: Array.from(raceAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Ethnicity"].indexOf(a.key) - subCategoryOrder["Ethnicity"].indexOf(b.key)) },
                     { key: "Parental Education Level", values: Array.from(educationAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Parental Education Level"].indexOf(a.key) - subCategoryOrder["Parental Education Level"].indexOf(b.key)) },
                     { key: "Lunch Type", values: Array.from(lunchAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Lunch Type"].indexOf(a.key) - subCategoryOrder["Lunch Type"].indexOf(b.key)) },
-                    { key: "Test Preparation", values: Array.from(prepAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Test Preparation"].indexOf(a.key) - subCategoryOrder["Test Preparation"].indexOf(b.key)) },
+                    { key: "Test Preparation", values: Array.from(prepAvg, ([key, value]) => ({ key: key, value: value })) },
                 ];
                 const overallAvg = d3.mean(data, d => d[scoreType]);
 
