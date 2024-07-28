@@ -31,48 +31,80 @@
                 d["math score"] = +d["math score"];
             });
 
-            const groupedData = d3.group(data, d => d.gender);
-            const avgMathScoreByGender = Array.from(groupedData, ([key, values]) => ({
-                gender: key,
-                average: d3.mean(values, d => d["math score"])
-            }));
+            const groupedData = d3.rollup(data,
+                v => d3.mean(v, d => d["math score"]),
+                d => d.gender,
+                d => d.lunch,
+                d => d["test preparation course"]
+            );
+
+            const processedData = [];
+            groupedData.forEach((lunch, gender) => {
+                lunch.forEach((prep, lunchType) => {
+                    prep.forEach((score, prepType) => {
+                        processedData.push({
+                            gender: gender,
+                            lunch: lunchType,
+                            preparation: prepType,
+                            average: score
+                        });
+                    });
+                });
+            });
 
             const svg = d3.select("svg");
-            const margin = {top: 20, right: 30, bottom: 40, left: 40};
+            const margin = {top: 20, right: 30, bottom: 120, left: 40};
             const width = +svg.attr("width") - margin.left - margin.right;
             const height = +svg.attr("height") - margin.top - margin.bottom;
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-            const x = d3.scaleBand()
-                .domain(avgMathScoreByGender.map(d => d.gender))
+            const x0 = d3.scaleBand()
+                .domain(processedData.map(d => `${d.gender}-${d.lunch}-${d.preparation}`))
                 .rangeRound([0, width])
-                .padding(0.1);
+                .paddingInner(0.1);
 
             const y = d3.scaleLinear()
-                .domain([0, d3.max(avgMathScoreByGender, d => d.average)])
+                .domain([0, d3.max(processedData, d => d.average)])
                 .nice()
                 .rangeRound([height, 0]);
 
+            const tooltip = d3.select(".tooltip");
+
             g.append("g")
                 .selectAll(".bar")
-                .data(avgMathScoreByGender)
+                .data(processedData)
                 .enter().append("rect")
                 .attr("class", "bar")
-                .attr("x", d => x(d.gender))
+                .attr("x", d => x0(`${d.gender}-${d.lunch}-${d.preparation}`))
                 .attr("y", d => y(d.average))
-                .attr("width", x.bandwidth())
-                .attr("height", d => height - y(d.average));
+                .attr("width", x0.bandwidth())
+                .attr("height", d => height - y(d.average))
+                .on("mouseover", function(event, d) {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    tooltip.html(`Gender: ${d.gender}<br>Lunch: ${d.lunch}<br>Preparation: ${d.preparation}<br>Average: ${d.average.toFixed(2)}`)
+                        .style("left", (event.pageX) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                    tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
 
             g.append("g")
                 .attr("class", "axis axis--x")
                 .attr("transform", `translate(0,${height})`)
-                .call(d3.axisBottom(x))
+                .call(d3.axisBottom(x0))
+                .selectAll("text")
+                .attr("transform", "rotate(-65)")
+                .attr("text-anchor", "end")
                 .append("text")
                 .attr("class", "axis-label")
                 .attr("x", width / 2)
                 .attr("y", margin.bottom - 10)
-                .attr("fill", "#000")
-                .text("Gender");
+                .attr("fill", "#000");
 
             g.append("g")
                 .attr("class", "axis axis--y")
@@ -83,7 +115,7 @@
                 .attr("y", -margin.left + 10)
                 .attr("dy", "0.71em")
                 .attr("fill", "#000")
-                .text("Score");
+                .text("Average Score");
         });
     </script>
 
