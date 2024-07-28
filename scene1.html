@@ -58,7 +58,12 @@
             "Lunch Type": '#C21FEF',
             "Test Preparation": '#8ECAE6'
         };
-
+        const subCategoryOrder = {
+            "Gender": ["female", "male"],
+            "Ethnicity": ["group A", "group B", "group C", "group D", "group E"],
+            "Parental Education Level": ["some high school", "high school", "some college", "associate's degree", "bachelor's degree", "master's degree"],
+            "Lunch Type": ["standard", "free/reduced"]
+        };
         // Load data from CSV file
         d3.csv("StudentsPerformance.csv").then(function (data) {
             data.forEach(d => {
@@ -86,7 +91,7 @@
                 const educationAvg = d3.rollup(data, v => d3.mean(v, d => d[scoreType]), d => d["parental level of education"]);
                 const lunchAvg = d3.rollup(data, v => d3.mean(v, d => d[scoreType]), d => d.lunch);
                 const prepAvg = d3.rollup(data, v => d3.mean(v, d => d[scoreType]), d => d["test preparation course"]);
-
+/*
                 const processedData = [
                     { key: "Gender", values: Array.from(genderAvg, ([key, value]) => ({ key: key, value: value })) },
                     { key: "Ethnicity", values: Array.from(raceAvg, ([key, value]) => ({ key: key, value: value })) },
@@ -94,7 +99,14 @@
                     { key: "Lunch Type", values: Array.from(lunchAvg, ([key, value]) => ({ key: key, value: value })) },
                     { key: "Test Preparation", values: Array.from(prepAvg, ([key, value]) => ({ key: key, value: value })) },
                 ];
-
+                */
+                const processedData = [
+                    { key: "Gender", values: Array.from(genderAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Gender"].indexOf(a.key) - subCategoryOrder["Gender"].indexOf(b.key)) },
+                    { key: "Ethnicity", values: Array.from(raceAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Ethnicity"].indexOf(a.key) - subCategoryOrder["Ethnicity"].indexOf(b.key)) },
+                    { key: "Parental Education Level", values: Array.from(educationAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Parental Education Level"].indexOf(a.key) - subCategoryOrder["Parental Education Level"].indexOf(b.key)) },
+                    { key: "Lunch Type", values: Array.from(lunchAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Lunch Type"].indexOf(a.key) - subCategoryOrder["Lunch Type"].indexOf(b.key)) },
+                    { key: "Test Preparation", values: Array.from(prepAvg, ([key, value]) => ({ key: key, value: value })).sort((a, b) => subCategoryOrder["Test Preparation"].indexOf(a.key) - subCategoryOrder["Test Preparation"].indexOf(b.key)) },
+                ];
                 const overallAvg = d3.mean(data, d => d[scoreType]);
 
                 // dummy array
