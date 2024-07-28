@@ -184,15 +184,13 @@
                 })
                 .on("mouseover", function (event, d) {
                     d3.select("#tooltip")
-                        .style("left", (event.pageX + 5) + "px")
-                        .style("top", (event.pageY - 28) + "px")
                         .select("#value")
-                        .html("<b>" + d.key + "</b><br/>" + d.value.toFixed(2));
-                    d3.select("#tooltip").transition().duration(200).style("opacity", .9);
+                        .html("<b>" + d.group + ": </b>" + d.category + "<br/>" + "<b>Average Score: </b>" + d.average.toFixed(2));
+                    d3.select("#tooltip").style("opacity", 1);
                     d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                 })
                 .on("mouseout", function () {
-                    d3.select("#tooltip").transition().duration(500).style("opacity", 0);
+                    d3.select("#tooltip").style("opacity", 0);
                     d3.select(this).style("stroke", "none");
                 });
 
@@ -217,19 +215,7 @@
                 .attr("transform", "rotate(-45)")
                 .attr("text-anchor", "end");
 
-            // Add group labels
-            g.selectAll(".group-label")
-                .data(processedData)
-                .enter().append("text")
-                .attr("class", "group-label")
-                .attr("transform", function (d) {
-                    var x_label = x_category((d.cummulative * x_defect.bandwidth()) + (d.values.length * x_defect.bandwidth() / 2));
-                    return "translate(" + x_label + "," + (height + 50) + ")";
-                })
-                .text(function (d) {
-                    return d.key;
-                })
-                .attr('text-anchor', 'middle');
+            
         });
     </script>
     <p class="center">Stuff</p>
