@@ -60,6 +60,8 @@
                 { key: "Test Preparation", values: Array.from(prepAvg, ([key, value]) => ({ key: key, value: value })) },
             ];
 
+            const overallAvg = d3.mean(data, d => d["math score"]);
+
             const svg = d3.select("svg");
             const margin = { top: 50, right: 30, bottom: 150, left: 40 }; // Adjust top margin to accommodate tooltip
             const width = +svg.attr("width") - margin.left - margin.right;
@@ -176,7 +178,7 @@
                 .on("mouseover", function (event, d) {
                         d3.select("#tooltip")
                             .select("#value")
-                            .html("<b>" + key + "</b>: " + d.key + "<br/>" + d.value.toFixed(2));
+                            .html("<b>" + d.key + "</b>: " + "<br/>" + "<b>Average Score: </b>" + d.value.toFixed(2));
                         d3.select("#tooltip").style("opacity", 1);
                         d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                     })
@@ -206,6 +208,23 @@
                 .attr("transform", "rotate(-45)")
                 .attr("text-anchor", "end");
 
+
+            // Add the overall average line
+            g.append("line")
+                .attr("x1", 0)
+                .attr("x2", width)
+                .attr("y1", y(overallAvg))
+                .attr("y2", y(overallAvg))
+                .attr("stroke", "red")
+                .attr("stroke-width", 2)
+                .attr("stroke-dasharray", "4,4");
+
+            g.append("text")
+                .attr("x", width - 10)
+                .attr("y", y(overallAvg) - 10)
+                .attr("text-anchor", "end")
+                .attr("fill", "red")
+                .text(`Overall Average: ${overallAvg.toFixed(2)}`);
         });
     </script>
     <p class="center">Stuff</p>
