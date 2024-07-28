@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <svg width="1200" height="600"></svg>
+   
     <div class="header">
         <a href="index.html"><img src="img/stacks.png" alt="stacked lego icon" width="60" height="auto" class="center"
             style="margin-top:30px; cursor: pointer;"></a>
@@ -75,8 +75,8 @@
 
             const svg = d3.select("svg");
             const margin = { top: 20, right: 30, bottom: 150, left: 40 };
-            const width = +svg.attr("width") - margin.left - margin.right;
-            const height = +svg.attr("height") - margin.top - margin.bottom;
+            const width = 1200 - margin.left - margin.right;
+            const height = 600 - margin.top - margin.bottom;
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
             var barPadding = 10;
