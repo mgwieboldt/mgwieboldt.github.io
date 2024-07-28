@@ -33,11 +33,15 @@
 
             // Calculate average scores for each group
             const genderAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d.gender);
+            const raceAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d["race/ethnicity"]);
+            const educationAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d["parental level of education"]);
             const lunchAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d.lunch);
             const prepAvg = d3.rollup(data, v => d3.mean(v, d => d["math score"]), d => d["test preparation course"]);
 
             const processedData = [
                 ...Array.from(genderAvg, ([key, value]) => ({ group: key, average: value })),
+                ...Array.from(raceAvg, ([key, value]) => ({ group: key, average: value })),
+                ...Array.from(educationAvg, ([key, value]) => ({ group: key, average: value })),
                 ...Array.from(lunchAvg, ([key, value]) => ({ group: key, average: value })),
                 ...Array.from(prepAvg, ([key, value]) => ({ group: key, average: value }))
             ];
@@ -99,7 +103,7 @@
                 .attr("transform", "rotate(-90)")
                 .attr("y", -margin.left + 10)
                 .attr("dy", "0.71em")
-                .attr("fill", "#000")
+                .attr("fill", "#111")
                 .text("Average Score");
         });
     </script>
