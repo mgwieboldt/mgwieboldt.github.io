@@ -22,7 +22,7 @@
 
 <body>
     <h2>Average Math Score grouped by Gender</h2>
-    <svg width="600" height="400"></svg>
+    <svg width="1200" height="600"></svg>
 
     <div id="tooltip">
         <p><span id="value"></span></p>
@@ -56,26 +56,17 @@
             const height = +svg.attr("height") - margin.top - margin.bottom;
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-/*
+
             const x0 = d3.scaleBand()
                 .domain(processedData.map(d => d.group))
-                .rangeRound([0, width])
+                .range([0, width])
                 .paddingInner(0);
 
             const x1 = d3.scaleBand()
                 .domain(processedData.map(d => d.category))
-                .rangeRound([0, x0.bandwidth()])
+                .range([0, x0.bandwidth()])
                 .padding(0);
-*/
-            const x0 = d3.scaleBand()
-                .domain([...new Set(processedData.map(d => d.group))])
-                .rangeRound([0, width])
-                .paddingInner(0.2);
 
-            const x1 = d3.scaleBand()
-                .domain([...new Set(processedData.map(d => d.category))])
-                .rangeRound([0, x0.bandwidth()])
-                .padding(0.1);
 
             const y = d3.scaleLinear()
                 .domain([0, d3.max(processedData, d => d.average)])
