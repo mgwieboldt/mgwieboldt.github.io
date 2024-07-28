@@ -27,7 +27,7 @@
         <p><span id="value"></span></p>
     </div>
 
-    <svg width="1200" height="600"></svg>
+    <svg width="1600" height="600"></svg>
 
     <script>
         // Define color mapping for categories
@@ -133,7 +133,7 @@
                 })
                 .attr("transform", function (d) {
                     var x_label = x_category((d.values.length * x_defect.bandwidth() + barPadding) / 2);
-                    var y_label = height + 50;
+                    var y_label = height + 80;
                     return "translate(" + x_label + "," + y_label + ")";
                 })
                 .text(function (d) {
