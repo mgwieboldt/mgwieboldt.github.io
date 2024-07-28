@@ -185,7 +185,7 @@
                 .on("mouseover", function (event, d) {
                     d3.select("#tooltip")
                         .select("#value")
-                        .html("<b>" + d.group + ": </b>" + d.category + "<br/>" + "<b>Average Score: </b>" + d.average.toFixed(2));
+                        .html("<b>" + d.x_group + ": </b>" + d.key + "<br/>" + "<b>Average Score: </b>" + d.value.toFixed(2));
                     d3.select("#tooltip").style("opacity", 1);
                     d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                 })
