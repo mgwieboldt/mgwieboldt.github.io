@@ -63,13 +63,13 @@
                 .paddingInner(0);
 
             const x1 = d3.scaleBand()
-                .domain(processedData.map(d => d.category))
+                .domain(data.map(d.category))
                 .range([0, x0.bandwidth()])
                 .padding(0);
 
 
             const y = d3.scaleLinear()
-                .domain([0, d3.max(processedData, d => d.average)])
+                .domain([0, 100])
                 .nice()
                 .rangeRound([height, 0]);
 
