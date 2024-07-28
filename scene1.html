@@ -17,19 +17,6 @@
             font-weight: bold;
         }
 
-        .tooltip {
-            position: absolute;
-            text-align: center;
-            padding: 6px;
-            font: 12px sans-serif;
-            background: lightsteelblue;
-            border: 0px;
-            border-radius: 8px;
-            pointer-events: none;
-            top: 0; /* Position at the top of the graph */
-            left: 50%; /* Center horizontally */
-            
-        }
     </style>
 </head>
 
@@ -185,6 +172,13 @@
                     return height - y(d.value);
                 })
                 .on("mouseover", function (event, d) {
+                    var x = d3.event.x,
+                        y = d3.event.y;
+
+                    d3.show(d);
+
+                    d3.style('top', y);
+                    d3.style('left', x);
                     d3.select("#tooltip")
                         .select("#value")
                         .html("<b>" + d.key + "</b><br/>" + d.value.toFixed(2));
