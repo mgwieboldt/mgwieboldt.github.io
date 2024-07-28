@@ -22,7 +22,7 @@
 
 <body>
     <h2>Average Math Score grouped by Category</h2>
-    
+
     <div id="tooltip">
         <p><span id="value"></span></p>
     </div>
@@ -176,7 +176,7 @@
                 .on("mouseover", function (event, d) {
                         d3.select("#tooltip")
                             .select("#value")
-                            .html("<b>" + d.key + "</b><br/>" + d.value.toFixed(2));
+                            .html("<b>" + d.x_category + "</b>: " + d.key + "<br/>" + d.value.toFixed(2));
                         d3.select("#tooltip").style("opacity", 1);
                         d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                     })
