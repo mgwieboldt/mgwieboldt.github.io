@@ -46,7 +46,7 @@
 
     <div id="charts"></div>
 
-    <div id="tooltip">
+    <div id="tooltip" class="tooltip">
         <p><span id="value"></span></p>
     </div>
 
@@ -83,19 +83,22 @@
                 const dataByCategory = d3.group(data, d => d[category]);
 
                 const pieData = Array.from(dataByCategory, ([key, values]) => {
+                    const total = values.length;
+                    const completed = values.filter(d => d["test preparation course"] === "completed").length;
+                    const none = values.filter(d => d["test preparation course"] === "none").length;
                     return {
                         category: key,
                         values: [
-                            { key: "completed", value: values.filter(d => d["test preparation course"] === "completed").length },
-                            { key: "none", value: values.filter(d => d["test preparation course"] === "none").length }
+                            { key: "completed", value: (completed / total) * 100 },
+                            { key: "none", value: (none / total) * 100 }
                         ]
                     };
                 });
 
-                pieData.forEach(d => {
-                    var pie = d3.pie()
-                        .value(function (d) { return d.value; });
+                var pie = d3.pie()
+                    .value(function (d) { return d.value; });
 
+                pieData.forEach(d => {
                     var data_ready = pie(d.values);
 
                     var arcs = svg.selectAll('g')
@@ -113,15 +116,17 @@
                         .on("mouseover", function (event, d) {
                             d3.select("#tooltip")
                                 .select("#value")
-                                .html(`<b>${d.data.key}</b>: ${d.data.value}`);
+                                .html(`<b>${d.data.key}</b>: ${d.data.value.toFixed(2)}%`);
                             d3.select("#tooltip").style("opacity", 1);
+                            d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                         })
                         .on("mouseout", function () {
                             d3.select("#tooltip").style("opacity", 0);
+                            d3.select(this).style("stroke", "none");
                         });
 
                     svg.append("text")
-                        .attr("transform", `translate(${width / 2}, ${-height / 2 + 10})`)
+                        .attr("transform", `translate(0, ${height / 2 + margin})`)
                         .attr("text-anchor", "middle")
                         .text(d.category)
                         .attr("class", "chart-title");
