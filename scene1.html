@@ -123,7 +123,7 @@
                     return "translate(" + x_category((i * x_defect.bandwidth())) + ",0)";
                 });
 
-            var category_label = category_g.selectAll(".category-label")
+                var category_label = category_g.selectAll(".category-label")
                 .data(function (d) {
                     return [d];
                 })
@@ -136,10 +136,17 @@
                     var y_label = height + 30;
                     return "translate(" + x_label + "," + y_label + ")";
                 })
-                .text(function (d) {
-                    return d.key;
+                .attr('text-anchor', 'middle')
+                .selectAll("tspan")
+                .data(function (d) {
+                    return d.key.split(" ");
                 })
-                .attr('text-anchor', 'middle');
+                .enter().append("tspan")
+                .attr("x", 0)
+                .attr("dy", "1em")
+                .text(function (d) {
+                    return d;
+                });
 
             var defect_label = defect_g.selectAll(".defect-label")
                 .data(function (d) {
@@ -154,10 +161,17 @@
                     var y_label = height + 10;
                     return "translate(" + x_label + "," + y_label + ")";
                 })
-                .text(function (d) {
-                    return d.key;
+                .attr('text-anchor', 'middle')
+                .selectAll("tspan")
+                .data(function (d) {
+                    return d.key.split(" ");
                 })
-                .attr('text-anchor', 'middle');
+                .enter().append("tspan")
+                .attr("x", 0)
+                .attr("dy", "1em")
+                .text(function (d) {
+                    return d;
+                });
 
             var rects = defect_g.selectAll('.rect')
                 .data(function (d) {
