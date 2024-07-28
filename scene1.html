@@ -93,7 +93,7 @@
                 .on("mouseover", function(event, d) {
                     d3.select("#tooltip")
                             .select("#value")
-                            .html(d.group + "<b>: </b>" + d.gender + "<br/>" + "<b>Average Score: </b>" + d.average);
+                            .html("<b>" + d.group + ": </b>" + d.key + "<br/>" + "<b>Average Score: </b>" + d.average);
                         d3.select("#tooltip").style("opacity", 1);
                         d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                 })
