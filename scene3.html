@@ -83,14 +83,13 @@
                 const dataByCategory = d3.group(data, d => d[category]);
 
                 const pieData = Array.from(dataByCategory, ([key, values]) => {
-                    const total = values.length;
                     const completed = values.filter(d => d["test preparation course"] === "completed").length;
                     const none = values.filter(d => d["test preparation course"] === "none").length;
                     return {
                         category: key,
                         values: [
-                            { key: "completed", value: (completed / total) * 100 },
-                            { key: "none", value: (none / total) * 100 }
+                            { key: "completed", value: (completed / values.length) * 100 },
+                            { key: "none", value: (none / values.length) * 100 }
                         ]
                     };
                 });
