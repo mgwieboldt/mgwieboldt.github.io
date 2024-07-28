@@ -66,7 +66,7 @@
                 .paddingInner(0.1);
 
             const x1 = d3.scaleBand()
-                .domain([2, 5,4,2,2])
+                .domain(processedData.map(d => d.category))
                 .range([0, x0.bandwidth()])
                 .padding(0.05);
 
