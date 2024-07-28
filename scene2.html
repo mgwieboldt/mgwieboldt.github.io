@@ -267,13 +267,14 @@
                     .attr("stroke-dasharray", "4,4");
 
                 g.append("text")
-                    .attr("x", width - 40)
+                    .attr("x", width - 80)
                     .attr("y", y(overallAvg) - 10)
                     .attr("text-anchor", "end")
-                    .attr("fill", "white")           
+                    .attr("fill", "white")          
                     .attr("stroke", "black")         
                     .attr("stroke-width", "1px")     
                     .text(`Overall Average: ${overallAvg.toFixed(2)}`);
+            }
 
             // Initial chart rendering
             updateChart(prepStatus);
