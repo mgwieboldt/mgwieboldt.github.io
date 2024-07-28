@@ -82,7 +82,9 @@
                 .range(d3.schemeCategory10);
 
             const tooltip = d3.select(".tooltip");
-            xScale.domain(data.map(xValue));
+
+            xScale.domain(processedData.map(xValue));
+
             g.append("g")
                 .selectAll("g")
                 .data(d3.group(processedData, d => d.group))
