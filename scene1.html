@@ -35,7 +35,7 @@
             "Gender": '#4A7B9D',
             "Ethnicity": '#54577C',
             "Parental Education Level": '#ED6A5A',
-            "Lunch Type": '#FFCE67',
+            "Lunch Type": '#FBCE67',
             "Test Preparation": '#8ECAE6'
         };
 
@@ -178,7 +178,7 @@
                 .on("mouseover", function (event, d) {
                         d3.select("#tooltip")
                             .select("#value")
-                            .html("<b>" + d.key + "</b>: " + "<br/>" + "<b>Average Score: </b>" + d.value.toFixed(2));
+                            .html("<b>" + d.key + "</b> " + "<br/>" + "<b>Average Score: </b>" + d.value.toFixed(2));
                         d3.select("#tooltip").style("opacity", 1);
                         d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                     })
