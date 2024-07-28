@@ -56,16 +56,18 @@
             const height = +svg.attr("height") - margin.top - margin.bottom;
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
+            const groups = ["Gender", "Ethnicity", "Parental Education Level", "Lunch Type", "Test Preparation"];
+            const categories = [...new Set(processedData.map(d => d.category))];
 
             const x0 = d3.scaleBand()
-                .domain(["Gender", "Ethnicity", "Parental Education Level", "Lunch Type", "Test Preparation"])
+                .domain(groups)
                 .range([0, width])
-                .paddingInner(0.2);
+                .paddingInner(0.1);
 
             const x1 = d3.scaleBand()
-                .domain([...new Set(processedData.map(d => d.category))])
+                .domain(categories)
                 .range([0, x0.bandwidth()])
-                .padding(0.1);
+                .padding(0.05);
 
 
             const y = d3.scaleLinear()
@@ -79,14 +81,15 @@
 
             const tooltip = d3.select(".tooltip");
 
-            const groups = g.append("g")
+            const groupData = d3.group(processedData, d => d.group);
+
+
+            g.append("g")
                 .selectAll("g")
-                .data(d3.group(processedData, d => d.group))
+                .data(groupData)
                 .enter().append("g")
-                .attr("transform", d => `translate(${x0(d[0])},0)`);
-
-
-            groups.selectAll("rect")
+                .attr("transform", d => `translate(${x0(d[0])},0)`)
+                .selectAll("rect")
                 .data(d => d[1])
                 .enter().append("rect")
                 .attr("x", d => x1(d.category))
