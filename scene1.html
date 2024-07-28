@@ -79,13 +79,14 @@
 
             const tooltip = d3.select(".tooltip");
 
-
-            g.append("g")
+            const groups = g.append("g")
                 .selectAll("g")
                 .data(d3.group(processedData, d => d.group))
                 .enter().append("g")
-                .attr("transform", d => `translate(${x0(d[0])},0)`)
-                .selectAll("rect")
+                .attr("transform", d => `translate(${x0(d[0])},0)`);
+
+
+            groups.selectAll("rect")
                 .data(d => d[1])
                 .enter().append("rect")
                 .attr("x", d => x1(d.category))
@@ -93,17 +94,17 @@
                 .attr("width", x1.bandwidth())
                 .attr("height", d => height - y(d.average))
                 .attr("fill", d => color(d.category))
-                .on("mouseover", function(event, d) {
+                .on("mouseover", function (event, d) {
                     d3.select("#tooltip")
-                            .select("#value")
-                            .html("<b>" + d.group + ": </b>" + d.category + "<br/>" + "<b>Average Score: </b>" + d.average.toFixed(2));
-                        d3.select("#tooltip").style("opacity", 1);
-                        d3.select(this).style("stroke", "black").style("stroke-width", "2px");
+                        .select("#value")
+                        .html("<b>" + d.group + ": </b>" + d.category + "<br/>" + "<b>Average Score: </b>" + d.average.toFixed(2));
+                    d3.select("#tooltip").style("opacity", 1);
+                    d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                 })
                 .on("mouseout", function () {
-                        d3.select("#tooltip").style("opacity", 0);
-                        d3.select(this).style("stroke", "none");
-                    });
+                    d3.select("#tooltip").style("opacity", 0);
+                    d3.select(this).style("stroke", "none");
+                });
 
             g.append("g")
                 .attr("class", "axis axis--x")
