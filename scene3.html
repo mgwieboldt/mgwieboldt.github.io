@@ -80,26 +80,23 @@
                     .append("g")
                     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-                const dataByCategory = d3.nest()
-                    .key(d => d[category])
-                    .rollup(v => {
-                        return {
-                            completed: v.filter(d => d["test preparation course"] === "completed").length,
-                            none: v.filter(d => d["test preparation course"] === "none").length
-                        };
-                    })
-                    .entries(data);
+                const dataByCategory = d3.group(data, d => d[category]);
 
-                dataByCategory.forEach(d => {
+                const pieData = Array.from(dataByCategory, ([key, values]) => {
+                    return {
+                        category: key,
+                        values: [
+                            { key: "completed", value: values.filter(d => d["test preparation course"] === "completed").length },
+                            { key: "none", value: values.filter(d => d["test preparation course"] === "none").length }
+                        ]
+                    };
+                });
+
+                pieData.forEach(d => {
                     var pie = d3.pie()
                         .value(function (d) { return d.value; });
 
-                    var newData = [
-                        { key: "completed", value: d.value.completed },
-                        { key: "none", value: d.value.none }
-                    ];
-
-                    var data_ready = pie(d3.entries(newData));
+                    var data_ready = pie(d.values);
 
                     var arcs = svg.selectAll('g')
                         .data(data_ready)
@@ -109,7 +106,7 @@
                             .innerRadius(0)
                             .outerRadius(radius)
                         )
-                        .attr('fill', function (d) { return (color(d.data.key)) })
+                        .attr('fill', function (d) { return color(d.data.key); })
                         .attr("stroke", "black")
                         .style("stroke-width", "2px")
                         .style("opacity", 0.7)
@@ -126,7 +123,7 @@
                     svg.append("text")
                         .attr("transform", `translate(${width / 2}, ${-height / 2 + 10})`)
                         .attr("text-anchor", "middle")
-                        .text(d.key)
+                        .text(d.category)
                         .attr("class", "chart-title");
                 });
             }
