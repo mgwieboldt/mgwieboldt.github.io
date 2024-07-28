@@ -184,8 +184,7 @@
                 })
                 .on("mouseover", function (event, d) {
                     d3.select("#tooltip")
-                        .style("left", (event.pageX + 10) + "px") // Adjust horizontal position
-                        .style("top", (event.pageY - 40) + "px")  // Adjust vertical position
+                        .attr('transform', `translate(${x}, ${y})`)
                         .select("#value")
                         .html("<b>" + d.x_category + ": </b>" + d.key + "<br/>" + "<b>Average Score: </b>" + d.value.toFixed(2));
                     d3.select("#tooltip").style("opacity", 1);
