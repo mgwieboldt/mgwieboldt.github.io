@@ -90,7 +90,7 @@
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", .9);
-                    tooltip.html(`Group: ${d.group}<br>Category: ${d.category}<br>Average Score: ${d.average.toFixed(2)}`)
+                    tooltip.html(`Type: ${d.category}<br>Average Score: ${d.average.toFixed(2)}`)
                         .style("left", (event.pageX) + "px")
                         .style("top", (event.pageY - 28) + "px");
                 })
@@ -118,28 +118,6 @@
                 .attr("dy", "0.71em")
                 .attr("fill", "#000")
                 .text("Average Score");
-
-            svg.append("g")
-                .attr("class", "legend")
-                .attr("transform", `translate(${width - 100}, ${margin.top})`)
-                .selectAll("g")
-                .data(color.domain())
-                .enter().append("g")
-                .attr("transform", (d, i) => `translate(0, ${i * 20})`)
-                .append("rect")
-                .attr("x", -18)
-                .attr("width", 18)
-                .attr("height", 18)
-                .attr("fill", color);
-
-            svg.select(".legend")
-                .selectAll("g")
-                .append("text")
-                .attr("x", -24)
-                .attr("y", 9)
-                .attr("dy", "0.35em")
-                .attr("text-anchor", "end")
-                .text(d => d);
         });
     </script>
     <p class="center">Stuff</p>
