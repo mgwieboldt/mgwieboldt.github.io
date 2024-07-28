@@ -174,7 +174,7 @@
                     })
                     .attr("transform", function (d) {
                         var x_label = x_category((d.values.length * x_defect.bandwidth() + barPadding) / 2);
-                        var y_label = height + 80;
+                        var y_label = height + 60;
                         return "translate(" + x_label + "," + y_label + ")";
                     })
                     .attr('text-anchor', 'middle')
@@ -273,10 +273,13 @@
                     .attr("stroke-dasharray", "4,4");
 
                 g.append("text")
-                    .attr("x", width - 80)
+                    .attr("x", width - 40)
                     .attr("y", y(overallAvg) - 10)
                     .attr("text-anchor", "end")
-                    .attr("fill", "red")
+                    .attr("fill", "red")          
+                    .attr("stroke", "black")         
+                    .attr("stroke-width", "1px")   
+                    .attr("font-size", "25px")     
                     .text(`Overall Average: ${overallAvg.toFixed(2)}`);
             }
 
