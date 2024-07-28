@@ -28,12 +28,16 @@
             pointer-events: none;
         }
 
+        .category-group {
+            margin-bottom: 40px;
+        }
+
         .pie-chart {
             display: inline-block;
             margin: 20px;
         }
 
-        .chart-title {
+        .category-title, .chart-title {
             text-align: center;
             font-family: 'Roboto', sans-serif;
             font-weight: bold;
@@ -60,12 +64,20 @@
         d3.csv("StudentsPerformance.csv").then(function (data) {
             const categories = ["gender", "race/ethnicity", "parental level of education", "lunch"];
 
-            // Create pie chart for each subcategory
+            // Create pie chart for each subcategory grouped by category
             categories.forEach(category => {
                 createPieChartsForSubcategory(category);
             });
 
             function createPieChartsForSubcategory(category) {
+                const container = d3.select("#charts")
+                    .append("div")
+                    .attr("class", "category-group");
+
+                container.append("h3")
+                    .attr("class", "category-title")
+                    .text(category.charAt(0).toUpperCase() + category.slice(1));
+
                 var margin = 20,
                     width = 250,
                     height = 250,
@@ -89,8 +101,7 @@
                         { key: "none", value: (none / total) * 100 }
                     ];
 
-                    const svg = d3.select("#charts")
-                        .append("div")
+                    const svg = container.append("div")
                         .attr("class", "pie-chart")
                         .append("svg")
                         .attr("width", width)
@@ -124,7 +135,7 @@
                     svg.append("text")
                         .attr("transform", `translate(0, ${height / 2 + margin})`)
                         .attr("text-anchor", "middle")
-                        .text(`${category}: ${key}`)
+                        .text(key)
                         .attr("class", "chart-title");
                 });
             }
