@@ -87,13 +87,13 @@
                 .enter().append("rect")
                 .attr("x", d => x1(d.category))
                 .attr("y", d => y(d.average))
-                .attr("width", x1.bandwidth())
+                .attr("width", x0.bandwidth())
                 .attr("height", d => height - y(d.average))
                 .attr("fill", d => color(d.category))
                 .on("mouseover", function(event, d) {
                     d3.select("#tooltip")
                             .select("#value")
-                            .html("<b>" + d.group + ": </b>" + d.category + "<br/>" + "<b>Average Score: </b>" + d.average);
+                            .html("<b>" + d.group + ": </b>" + d.category + "<br/>" + "<b>Average Score: </b>" + d.average.toFixed(2));
                         d3.select("#tooltip").style("opacity", 1);
                         d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                 })
