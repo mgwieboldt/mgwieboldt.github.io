@@ -172,15 +172,11 @@
                     return height - y(d.value);
                 })
                 .on("mouseover", function (event, d) {
-                    var x = d3.event.x,
-                        y = d3.event.y;
 
-                    d3.show(d);
-
-                    d3.style('top', y);
-                    d3.style('left', x);
                     d3.select("#tooltip")
                         .select("#value")
+                        .style('top', y = d3.event.y)
+                        .style('left', d3.event.x)
                         .html("<b>" + d.key + "</b><br/>" + d.value.toFixed(2));
                     d3.select("#tooltip").transition().duration(200).style("opacity", .9);
                     d3.select(this).style("stroke", "black").style("stroke-width", "2px");
