@@ -130,6 +130,7 @@
                             const mousePosition = d3.pointer(event);
                             var matrix = this.getScreenCTM()
                                 .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
+                            let pos = d3.select(this).node().getBoundingClientRect();
                             tooltip
                                 .style('left', `${pos['x']}px`)
                                 .style('top', `${(window.pageYOffset  + pos['y'] - 100)}px`)
