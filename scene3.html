@@ -26,6 +26,7 @@
             border: 0px;
             border-radius: 8px;
             pointer-events: none;
+            opacity: 0;
         }
 
         .category-group {
@@ -37,7 +38,8 @@
             margin: 20px;
         }
 
-        .category-title, .chart-title {
+        .category-title,
+        .chart-title {
             text-align: center;
             font-family: 'Roboto', sans-serif;
             font-weight: bold;
@@ -97,8 +99,8 @@
                     const none = values.filter(d => d["test preparation course"] === "none").length;
                     const total = completed + none;
                     const pieData = [
-                        { key: "completed", value: (completed / total) * 100 },
-                        { key: "none", value: (none / total) * 100 }
+                        { key: "completed", value: (completed / total) * 100, subcategory: key },
+                        { key: "none", value: (none / total) * 100, subcategory: key }
                     ];
 
                     const svg = container.append("div")
@@ -122,8 +124,10 @@
                         .style("opacity", 0.7)
                         .on("mouseover", function (event, d) {
                             d3.select("#tooltip")
+                                .style("left", (event.pageX - 50) + "px")
+                                .style("top", (event.pageY - 70) + "px")
                                 .select("#value")
-                                .html(`<b>${key}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%`);
+                                .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%`);
                             d3.select("#tooltip").style("opacity", 1);
                             d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                         })
