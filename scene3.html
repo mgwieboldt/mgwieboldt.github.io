@@ -131,8 +131,8 @@
                             var matrix = this.getScreenCTM()
                                 .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
                             tooltip
-                                .style("left", (window.pageXOffset + matrix.e + 15) + "px")
-                                .style("top", (window.pageYOffset + matrix.f - 30) + "px")
+                                .style('left', `${pos['x']}px`)
+                                .style('top', `${(window.pageYOffset  + pos['y'] - 100)}px`)
                                 .select("#value")
                                 .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%<br>Overall Average Score: ${averageScore}<br>Average Score (${d.data.key}): ${d.data.averageScore}`);
                             tooltip.style("opacity", 1);
