@@ -67,6 +67,11 @@
         d3.csv("StudentsPerformance.csv").then(function (data) {
             const categories = ["gender", "race/ethnicity", "parental level of education", "lunch"];
 
+            // Calculate average exam score for each group
+            data.forEach(d => {
+                d["average score"] = (+d["math score"] + +d["reading score"] + +d["writing score"]) / 3;
+            });
+
             // Create pie chart for each subcategory grouped by category
             categories.forEach(category => {
                 createPieChartsForSubcategory(category);
@@ -99,9 +104,10 @@
                     const completed = values.filter(d => d["test preparation course"] === "completed").length;
                     const none = values.filter(d => d["test preparation course"] === "none").length;
                     const total = completed + none;
+                    const averageScore = d3.mean(values, d => d["average score"]).toFixed(2);
                     const pieData = [
-                        { key: "completed", value: (completed / total) * 100, subcategory: key },
-                        { key: "none", value: (none / total) * 100, subcategory: key }
+                        { key: "completed", value: (completed / total) * 100, subcategory: key, averageScore },
+                        { key: "none", value: (none / total) * 100, subcategory: key, averageScore }
                     ];
 
                     const chartContainer = container.append("div")
@@ -126,10 +132,10 @@
                         .style("opacity", 0.7)
                         .on("mouseover", function (event, d) {
                             d3.select("#tooltip")
-                                .style("left", (event.pageX - 500) + "px")
-                                .style("top", (event.pageY - 150) + "px")
+                                .style("left", (event.pageX - 50) + "px")
+                                .style("top", (event.pageY - 70) + "px")
                                 .select("#value")
-                                .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%`);
+                                .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%<br>Average Score: ${d.data.averageScore}`);
                             d3.select("#tooltip").style("opacity", 1);
                             d3.select(this).style("stroke", "black").style("stroke-width", "2px");
                         })
