@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <title>CS416 Narrative Visualization</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Rubik:ital,wght@0,400;1,800&display=swap"
         rel="stylesheet">
@@ -17,6 +17,17 @@
             font-weight: bold;
         }
 
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+        }
 
         .category-group {
             margin-bottom: 40px;
@@ -126,22 +137,21 @@
                         .style("stroke-width", "2px")
                         .style("opacity", 0.7)
                         .on("mouseover", function (event, d) {
+                            d3.select(this).style("stroke", "black").style("stroke-width", "2px");
+
+                            const tooltip = d3.select("#tooltip");
+                            tooltip
+                                .style("opacity", 1)
+                                .select("#value")
+                                .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%<br>Overall Average Score: ${averageScore}<br>Average Score (${d.data.key}): ${d.data.averageScore}`);
+                        })
+                        .on("mousemove", function (event) {
                             const tooltip = d3.select("#tooltip");
                             const mousePosition = d3.pointer(event);
 
                             tooltip
-                                .style("left", (event.pageX + 10) + "px")
-                                .style("top", (event.pageY - 50) + "px")
-                                .select("#value")
-                                .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%<br>Overall Average Score: ${averageScore}<br>Average Score (${d.data.key}): ${d.data.averageScore}`);
-                            tooltip.style("opacity", 1);
-                            d3.select(this).style("stroke", "black").style("stroke-width", "2px");
-                        })
-                        .on("mousemove", function (event) {
-                            const tooltip = d3.select("#tooltip");
-                            tooltip
-                                .style("left", (event.pageX + 10) + "px")
-                                .style("top", (event.pageY - 50) + "px");
+                                .style("left", (mousePosition[0] + 10) + "px")
+                                .style("top", (mousePosition[1] - 20) + "px");
                         })
                         .on("mouseout", function () {
                             d3.select("#tooltip").style("opacity", 0);
@@ -155,7 +165,7 @@
             }
         });
     </script>
-    <p class="center">Stuff</p>
+
 
     <br><br>
     <a href="scene2.html" style="text-decoration:none;"><button class="center">Next</button></a>
