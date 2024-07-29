@@ -57,6 +57,7 @@
         <div class="label"></div>
         <div class="percent"></div>
         <div class="count"></div>
+        <div class="overall"></div>
     </div>
 
     <script>
@@ -111,6 +112,7 @@
                     const completed = completedValues.length;
                     const none = noneValues.length;
 
+                    const averageScore = d3.mean(values, d => d["average score"]).toFixed(2);
                     const completedAvgScore = d3.mean(completedValues, d => d["average score"]).toFixed(2);
                     const noneAvgScore = d3.mean(noneValues, d => d["average score"]).toFixed(2);
 
@@ -147,6 +149,7 @@
 
                             tooltip.select('.label').html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${percent}%`);
                             tooltip.select('.count').html(`Average Exam Score: ${d.data.averageScore}`);
+                            tooltip.select('.overall').html(`Overall Average: ${averageScore}`);
 
                             tooltip.style('display', 'block');
                         })
