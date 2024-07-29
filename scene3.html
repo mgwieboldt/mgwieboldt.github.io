@@ -138,8 +138,8 @@
                         .style("opacity", 0.7)
                         .on("mouseover", function (event, d) {
                             d3.select("#tooltip")
-                                .style("left", (event.pageX - 50) + "px")
-                                .style("top", (event.pageY - 70) + "px")
+                                .style("left", (event.pageX - 900) + "px")
+                                .style("top", (event.pageY - 150) + "px")
                                 .select("#value")
                                 .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%<br>Overall Average Score: ${averageScore}<br>Average Score (${d.data.key}): ${d.data.averageScore}`);
                             d3.select("#tooltip").style("opacity", 1);
@@ -164,7 +164,7 @@
     <a href="index.html" style="text-decoration:none;"><button class="center"
     style="outline: 2px; outline-color: black; background-color: #0055BF; margin-bottom: 50px;">Back</button></a>
     <br><br><br>
-    
+
     <div class="footer">
         <h4>Maxwell Wieboldt (mgw10)</h4>
         <h4>Dataset: https://www.kaggle.com/datasets/spscientist/students-performance-in-exams/data</h4>
