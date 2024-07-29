@@ -128,10 +128,11 @@
                         .on("mouseover", function (event, d) {
                             const tooltip = d3.select("#tooltip");
                             const mousePosition = d3.pointer(event);
-
+                            var matrix = this.getScreenCTM()
+                                .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
                             tooltip
-                                .style("left", d3.select(this).attr("cx") + "px")
-                                .style("top", d3.select(this).attr("cy") + "px")
+                                .style("left", (window.pageXOffset + matrix.e + 15) + "px")
+                                .style("top", (window.pageYOffset + matrix.f - 30) + "px")
                                 .select("#value")
                                 .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%<br>Overall Average Score: ${averageScore}<br>Average Score (${d.data.key}): ${d.data.averageScore}`);
                             tooltip.style("opacity", 1);
