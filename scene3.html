@@ -124,8 +124,8 @@
                         .style("opacity", 0.7)
                         .on("mouseover", function (event, d) {
                             d3.select("#tooltip")
-                                .style("left", (event.pageX - 50) + "px")
-                                .style("top", (event.pageY - 70) + "px")
+                                .style("left", (event.pageX) + "px")
+                                .style("top", (event.pageY) + "px")
                                 .select("#value")
                                 .html(`<b>${d.data.subcategory}</b> (${d.data.key}): ${d.data.value.toFixed(2)}%`);
                             d3.select("#tooltip").style("opacity", 1);
